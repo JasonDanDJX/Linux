@@ -32,6 +32,10 @@ def getHtml(url):
      return html
 
 
+def go2Web(url):
+     os.system('chromium-browser ' + url)
+
+
 def get_token():
      res = urllib2.urlopen(auth_url)
      json_data = res.read()
@@ -48,7 +52,7 @@ def dump_res(buf):
           print ("我："+dialogue)
 
 
-def use_cloud(token):#上传百度语音识别
+def ASR(token):#上传百度语音识别
      fp = wave.open(filename, 'rb')#调用录音文件
      nf = fp.getnframes()
      f_len = nf * 2
@@ -78,8 +82,10 @@ def TTS(mesg):#语音合成
      #print(url)#调试监测用 
      os.system('mplayer "%s"'%(url))
 
+
 def TuringRobot():
      info = dialogue
+     url = '0'
      request = turing_api + info
      response = getHtml(request)
      get_json = json.loads(response)
@@ -87,6 +93,11 @@ def TuringRobot():
      answer = get_json['text']
      print("机器人："+answer)
      TTS(answer)
+     if(get_json['code'] == 200000):
+          url = get_json['url']
+          print(url)
+          os.system('chromium-browser ' + url)
+     
      
 while(True):
      print("请说话...")
@@ -95,7 +106,7 @@ while(True):
      token = get_token()
      #print("token="+token)
      #获得token
-     use_cloud(token)
+     ASR(token)
      #进行识别处理，然后人机交互
      if dialogue != '0':
           if re.search('结束',dialogue) :
@@ -131,7 +142,3 @@ while(True):
      else:
           continue
         
-        
-        
-    
-
